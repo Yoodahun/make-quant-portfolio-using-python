@@ -53,6 +53,132 @@ def insert_adjust_stock_price(data:DataFrame):
     args = data.values.tolist()
     db_executemany(query, args)
 
+def insert_financial_statement(data:DataFrame):
+    query = """
+        insert into kor_fs(계정, 기준일, 값, 종목코드, 공시구분)
+        values (%s, %s, %s, %s, %s) as new
+        on duplicate key update 
+        값=new.값     
+"""
+    args = data.values.tolist()
+    db_executemany(query, args)
+
+def select_quarterly_financial_statement_for_calculate_factor_using_marketcap()->DataFrame:
+    """
+    분기 재무제표 데이터를 리턴합니다.
+    당기순이익', '자본', '영업활동으로인한현금흐름', '매출액', '매출총이익', '영업이익', 'FCF
+    :return: DataFrame
+    """
+    engine = get_db_engine()
+    data = pd.read_sql("""
+      select * from kor_fs
+      where 공시구분 = 'q'
+      and 계정 in ('당기순이익', '자본', '영업활동으로인한현금흐름', '매출액', '매출총이익', '영업이익', 'FCF')
+    ;
+    """, con=engine)
+    engine.dispose()
+    return data
+def select_quarterly_financial_statement_for_calculate_factor_not_using_marketcap()->DataFrame:
+    """
+    분기 재무제표 데이터를 리턴합니다.
+    '당기순이익','매출총이익','영업활동으로인한현금흐름','자산','자본', '유형자산', '부채'
+    :return: DataFrame
+    """
+    engine = get_db_engine()
+    data = pd.read_sql("""
+      select * from kor_fs
+      where 공시구분 = 'q'
+      and 계정 in ('당기순이익','매출총이익','영업활동으로인한현금흐름','자산','자본', '유형자산', '부채')
+    ;
+    """, con=engine)
+    engine.dispose()
+    return data
+def insert_value_factor_date(data:DataFrame ):
+    query= """
+        insert into kor_value (종목코드, 기준일, 지표, 값)
+        values (%s, %s, %s, %s) as new
+        on duplicate key update 
+        값=new.값
+    """
+
+    args = data.values.tolist()
+    db_executemany(query, args)
+
+def insert_profitability_factor_date(data:DataFrame ):
+    query= """
+        insert into kor_profitability (종목코드, 기준일, ROE, GPA, NAV, CFO, 부채비율)
+        values (%s, %s, %s, %s, %s, %s, %s) as new
+        on duplicate key update 
+        기준일=new.기준일, ROE=new.ROE, GPA=new.GPA, NAV=new.NAV, CFO=new.CFO, 부채비율=new.부채비율
+    """
+
+    args = data.values.tolist()
+    db_executemany(query, args)
+
+def select_value_data_where_max_date()->DataFrame:
+    """
+    최근 기준일 기준 밸류 데이터를 가져온다.
+
+    :return:
+    """
+    engine = get_db_engine()
+    data = pd.read_sql("""
+      select * from kor_value
+      where 기준일 = (select max(기준일) from kor_value)
+    ;
+    """, con=engine)
+    engine.dispose()
+    return data
+
+def select_price_where_max_date_from_1_year():
+    """
+    최신날짜로부터 1년전 데이터들을 전부 뽑아온다.
+
+    :return:
+    """
+    engine = get_db_engine()
+    data = pd.read_sql("""
+      select 날짜, 종가, 종목코드
+      from kor_price
+      where 날짜 >= (select (select max(날짜) from kor_price) - interval 1 year)
+    ;
+    """, con=engine)
+    engine.dispose()
+    return data
+
+def select_profit_factor_where_max_date():
+    """
+    수익성지표를 리턴합니다.
+
+    :return:
+    """
+    engine = get_db_engine()
+    data = pd.read_sql("""
+      select 종목코드, 기준일, ROE, GPA, CFO, 부채비율
+      from kor_profitability
+      where 기준일 >= (select max(기준일) from kor_profitability)
+    ;
+    """, con=engine)
+    engine.dispose()
+    return data
+
+def select_from_kor_sector_where_max_date()->DataFrame:
+    engine = get_db_engine()
+    data = pd.read_sql("""
+      select *
+      from kor_sector
+      where 기준일 = (select max(기준일) from kor_sector)
+    ;
+    """, con=engine)
+    engine.dispose()
+
+    return data
+
+
+
+
+
+
 
 
 

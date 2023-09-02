@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, Engine
 def get_db_engine()->Engine:
     db_config = get_config("db_config")["DB_CONFIG"]
     engine_info = f'mysql+pymysql://{db_config["USER"]}:{db_config["PW"]}@{db_config["HOST"]}:{db_config["PORT"]}/{db_config["DB"]}'
-    print(engine_info)
+
     return create_engine(engine_info)
 
 
