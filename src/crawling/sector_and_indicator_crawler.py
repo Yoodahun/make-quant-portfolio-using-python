@@ -1,8 +1,10 @@
+import re
 import time
 
 import requests as rq
 from io import BytesIO
 import pandas as pd
+from bs4 import BeautifulSoup
 from tqdm import tqdm
 from pandas import DataFrame
 
@@ -10,6 +12,10 @@ from src.crawling.biz_day_crawler import biz_day_crawler
 
 
 class SectorAndIndicatorCrawler:
+    """
+    크롤링을 하기위한 클래스
+
+    """
     def __init__(self):
         self.gen_otp_url = 'http://data.krx.co.kr/comm/fileDn/GenerateOTP/generate.cmd'
         self.header = {
@@ -17,6 +23,8 @@ class SectorAndIndicatorCrawler:
         }
         self.down_url = 'http://data.krx.co.kr/comm/fileDn/download_csv/download.cmd'
         self.biz_day = biz_day_crawler()
+
+        print(self.biz_day)
 
     def crawling_sector(self) -> DataFrame:
         kospi = self.__crawling_sector_kospi()
@@ -30,7 +38,7 @@ class SectorAndIndicatorCrawler:
 
     def __crawling_sector_kospi(self):
         """
-        코스피 섹터 크롤링
+        코스피 섹터 종목,업종 크롤링
 
         :return:
         """
@@ -48,7 +56,7 @@ class SectorAndIndicatorCrawler:
 
     def __crawling_sector_kosdaq(self):
         """
-        코스닥 섹터 크롤링
+        코스닥 섹터 종목,업종 크롤링
         :return:
         """
         gen_otp_stock = {
@@ -94,6 +102,11 @@ class SectorAndIndicatorCrawler:
         return pd.read_csv(BytesIO(downloaded_sector_info.content), encoding='EUC-KR')
 
     def crawling_wics_sector_info(self) -> DataFrame:
+        """
+        WICS 섹터정보 크롤링
+
+        :return:
+        """
         sector_code = ["G25", "G35", "G50", "G40", "G10", "G20", "G55", "G30", "G15", "G45"]
 
         data_sector = []
@@ -113,7 +126,14 @@ class SectorAndIndicatorCrawler:
         return korea_sector
 
     def crawling_adjust_stock_price(self, ticker: str, from_date:str, to_date:str) -> DataFrame:
+        """
+        수정주가 크롤링
 
+        :param ticker:
+        :param from_date:
+        :param to_date:
+        :return:
+        """
 
         url = f"https://fchart.stock.naver.com/siseJson.nhn?symbol={ticker}&requestType=1&startTime={from_date}&endTime={to_date}&timeframe=day"
 
@@ -131,3 +151,32 @@ class SectorAndIndicatorCrawler:
         price["종목코드"] = ticker
 
         return price
+
+    def crawling_financial_statement(self, ticker:str)->DataFrame:
+        """
+        재무제표 크롤링
+
+        :param ticker:
+        :return:
+        """
+        url = f"https://comp.fnguide.com/SVO2/ASP/SVD_Finance.asp?pGB=1&gicode=A{ticker}"
+        data = pd.read_html(url, displayed_only=False)
+
+        return data
+
+    def crawling_fiscal_date(self, ticker:str)->list:
+        """
+        결산월 리턴
+
+        :param ticker:
+        :return:
+        """
+        url = f"https://comp.fnguide.com/SVO2/ASP/SVD_Finance.asp?pGB=1&gicode=A{ticker}"
+        page_data = rq.get(url)
+        page_data_html = BeautifulSoup(page_data.content,'html.parser')
+
+        fiscal_data = page_data_html.select('div.corp_group1>h2')
+        fiscal_data_text = re.findall('[0-9]+', fiscal_data[1].text)
+
+        return fiscal_data_text
+
