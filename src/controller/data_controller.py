@@ -1,4 +1,5 @@
 import time
+import traceback
 
 import pandas as pd
 import numpy as np
@@ -61,9 +62,11 @@ class DataController:
                 )
                 insert_adjust_stock_price(price)
             except Exception:
-                print(f"수정주가 조회 실패 : {ticker_list['종목코드'][i]} {ticker_list['종목명'][i]}")
 
-            time.sleep(0.3)
+                print(f"수정주가 조회 혹은 삽입 실패 : {ticker_list['종목코드'][i]} {ticker_list['종목명'][i]}")
+                traceback.print_exc()
+
+            time.sleep(0.6)
 
     def merge_and_insert_financial_statement_data(self):
         ticker_list = select_ticker_list_where_max_date()
