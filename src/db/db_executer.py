@@ -174,6 +174,16 @@ def select_from_kor_sector_where_max_date()->DataFrame:
 
     return data
 
+def select_max_date_from_kor_price()->DataFrame:
+    engine = get_db_engine()
+    data = pd.read_sql("""
+      select max(날짜)
+      from kor_price
+    ;
+    """, con=engine)
+    engine.dispose()
+
+    return data
 
 
 
