@@ -117,7 +117,7 @@ class PortfolioController:
         else:
             return quality_list
 
-    def calculate_multi_factor_portfolio(self)->DataFrame:
+    def calculate_multi_factor_portfolio(self, count:int)->DataFrame:
         """
         멀티팩터 포트폴리오 계산
         :return:
@@ -183,7 +183,7 @@ class PortfolioController:
         data_bind_final_sum = (data_bind_final * wts).sum(axis=1, skipna=False).to_frame()
         data_bind_final_sum.columns = ['qvm']
         portfolio = data_bind.merge(data_bind_final_sum, on='종목코드')
-        portfolio['invest'] = np.where(portfolio['qvm'].rank() <= 5, 'Y', 'N')
+        portfolio['invest'] = np.where(portfolio['qvm'].rank() <= count, 'Y', 'N')
         #
         portfolio = portfolio[portfolio['invest'] == 'Y'].round(4)
 
