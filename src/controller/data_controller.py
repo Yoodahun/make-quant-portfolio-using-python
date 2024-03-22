@@ -48,9 +48,9 @@ class DataController:
     def insert_adjust_stock_price(self):
         ticker_list = select_ticker_list_where_max_date()
 
-        from_date = (date.today() + relativedelta(years=-1)).strftime("%Y%m%d")
+        from_date = (date.today() + relativedelta(months=-1)).strftime("%Y%m%d")
+
         to_date = (date.today()).strftime("%Y%m%d")
-        # to_date = from_date
 
         print(f"{from_date} ~ {to_date}")
 
@@ -63,7 +63,7 @@ class DataController:
             except Exception:
                 print(f"수정주가 조회 실패 : {ticker_list['종목코드'][i]} {ticker_list['종목명'][i]}")
 
-            time.sleep(0.8)
+            time.sleep(0.3)
 
     def merge_and_insert_financial_statement_data(self):
         ticker_list = select_ticker_list_where_max_date()
