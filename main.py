@@ -15,19 +15,20 @@ if __name__ == '__main__':
     data_controller = DataController()
 
     print("------- 크롤링 및 데이터 정제 후 DB추가 로직 실행 ------")
-    # print("insert data-----")
     print("기준일 기준 섹터 및 주식 정보 크롤링 후 저장 ----")
-    # data_controller.merge_and_insert_crawled_sector_and_stock_indicator_data()
+    data_controller.merge_and_insert_crawled_sector_and_stock_indicator_data()
     #
-    print("업정 정보 크롤링 및 합치기 후 저장 ------")
-    # data_controller.insert_wics_sector_info_data()
+    print("업종 정보 크롤링 및 합치기 후 저장 ------")
+    data_controller.insert_wics_sector_info_data()
 
-    print("수정주가 크롤링 후 저장-----")
+    # print("수정주가 크롤링 후 저장-----")
     # data_controller.insert_adjust_stock_price()
     print("재무재표 크롤링 후 저장-----")
-    # data_controller.merge_and_insert_financial_statement_data()
+    data_controller.merge_and_insert_financial_statement_data()
 
     print("크롤링한 재무재표를 이용하여 밸류 및 수익성 지표 계신 및 저장-----")
     data_controller.calculate_and_insert_value_factor_data()
+
+    print("종료-----")
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
