@@ -87,9 +87,6 @@ class DataController:
 
                 data_merged = pd.concat([data_fs_y_after_cleansing, data_fs_q_after_cleansing])
 
-                # print(data_merged)
-
-                # print(ticker_code + " 재무제표 삽입---------")
                 # data_merged = data_merged.where(pd.notnull(data_merged), None)
                 insert_financial_statement(data_merged)
             except Exception:
@@ -311,7 +308,6 @@ class DataController:
                 fcf_rows.append(fcf_row)
 
             data = pd.concat([data, pd.DataFrame(fcf_rows)], ignore_index=False)
-            print("-------------")
 
 
         return data
