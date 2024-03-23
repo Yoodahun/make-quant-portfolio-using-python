@@ -1,0 +1,33 @@
+name: 국내 주식 재무제표 크롤링하기
+
+on:
+  workflow_dispatch:
+
+env:
+  IS_GITHUB_ACTION: True
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PW: ${{ secrets.DB_PW }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB: ${{ secrets.DB }}
+
+
+jobs:
+  run_financial_statement:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run kor_price.py
+        run: python crawling_financial_statement_data.py
