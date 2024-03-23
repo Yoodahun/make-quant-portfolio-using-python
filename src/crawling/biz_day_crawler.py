@@ -11,7 +11,7 @@ def biz_day_crawler() -> str:
     url = 'https://finance.naver.com/sise/sise_deposit.nhn'
     data = rq.get(url)
 
-    data_html = BeautifulSoup(data.content)
+    data_html = BeautifulSoup(data.content, features='lxml')
     parse_day = data_html.select_one(
         'div.subtop_sise_graph2 > ul.subtop_chart_note > li > span.tah'
     ).text
