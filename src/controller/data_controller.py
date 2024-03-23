@@ -49,7 +49,7 @@ class DataController:
     def insert_adjust_stock_price(self):
         ticker_list = select_ticker_list_where_max_date()
 
-        from_date = (date.today() + relativedelta(months=-1)).strftime("%Y%m%d")
+        from_date = (date.today() + relativedelta(days=-8)).strftime("%Y%m%d")
 
         to_date = (date.today()).strftime("%Y%m%d")
 
