@@ -35,7 +35,7 @@ class DataController:
         korean_ticker_data = korean_ticker_data.reset_index(drop=True)
         korean_ticker_data.columns = korean_ticker_data.columns.str.replace(" ", "")
         korean_ticker_data = korean_ticker_data[
-            ["종목코드", "종목명", "시장구분", "종가", "시가총액", "기준일", "EPS", "선행EPS", "BPS", "주당배당금", "종목구분"]
+            ["종목코드", "종목명", "시장구분", "종가", "시가총액", "기준일", "EPS", "BPS", "주당배당금", "종목구분"]
         ]
         korean_ticker_data = korean_ticker_data.replace({np.nan: None})
         korean_ticker_data['기준일'] = pd.to_datetime(korean_ticker_data["기준일"])
