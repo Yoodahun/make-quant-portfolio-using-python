@@ -19,7 +19,9 @@ class SectorAndIndicatorCrawler:
     def __init__(self):
         self.gen_otp_url = 'http://data.krx.co.kr/comm/fileDn/GenerateOTP/generate.cmd'
         self.header = {
-            "Referer": 'http://data.krx.co.kr/contents/MDC/MDI/mdiLoader'
+            "Referer": 'http://data.krx.co.kr/contents/MDC/MDI/mdiLoader',
+            "Upgrade-Insecure-Requests":'1',
+            "User-Agent":'Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36'
         }
         self.down_url = 'http://data.krx.co.kr/comm/fileDn/download_csv/download.cmd'
         self.biz_day = biz_day_crawler()
