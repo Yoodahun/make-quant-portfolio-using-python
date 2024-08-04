@@ -46,10 +46,10 @@ class DataController:
         sector_data = self.sector_and_indicator_crawler.crawling_wics_sector_info()
         insert_wics_sector_info_data(sector_data)
 
-    def insert_adjust_stock_price(self):
+    def insert_adjust_stock_price(self, from_date_input :str = ""):
         ticker_list = select_ticker_list_where_max_date()
 
-        from_date = (date.today() + relativedelta(days=-8)).strftime("%Y%m%d")
+        from_date = from_date_input if from_date_input != "" else  (date.today() + relativedelta(days=-8)).strftime("%Y%m%d")
 
         to_date = (date.today()).strftime("%Y%m%d")
 
